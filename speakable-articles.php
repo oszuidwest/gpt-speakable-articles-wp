@@ -140,13 +140,14 @@ function speakable_articles_admin_page() {
 
     echo '<div class="wrap">';
     echo '<h1>Latest Articles with Speakable Summaries</h1>';
-    echo '<table class="wp-list-table widefat fixed striped">';
+    echo '<table class="wp-list-table widefat fixed striped speakable-articles-table">';
     echo '<thead>';
     echo '<tr>';
     echo '<th scope="col" id="title" class="manage-column column-title">Post Title</th>';
     echo '<th scope="col" id="summary" class="manage-column column-summary">Generated Summary</th>';
     echo '</tr>';
     echo '</thead>';
+
     echo '<tbody>';
 
     if ($query->have_posts()) {
@@ -158,7 +159,7 @@ function speakable_articles_admin_page() {
 
             echo '<tr>';
             echo '<td>' . esc_html($title) . '</td>';
-            echo '<td>' . esc_html($summary) . '</td>';
+            echo '<td><p>' . esc_html($summary) . '</p><p><strong><span class="copy-summary" data-summary="' . esc_attr($summary) . '" style="color: #0073aa; cursor: pointer;">⇢ Copy Summary</span></strong></p></td>';
             echo '</tr>';
         }
     } else {
@@ -181,3 +182,32 @@ add_action('admin_menu', function () {
         'speakable_articles_admin_page'
     );
 });
+
+function speakable_articles_enqueue_admin_scripts() {
+    wp_register_script('speakable-articles-admin', false);
+    wp_enqueue_script('speakable-articles-admin');
+    wp_add_inline_script('speakable-articles-admin', '
+        document.addEventListener("DOMContentLoaded", function() {
+            var table = document.querySelector(".speakable-articles-table");
+
+            table.addEventListener("click", function(event) {
+                var target = event.target;
+                if (target.classList.contains("copy-summary")) {
+                    var summary = target.getAttribute("data-summary");
+                    var textarea = document.createElement("textarea");
+                    textarea.textContent = summary;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(textarea);
+
+                    target.textContent = "Copied!";
+                    setTimeout(function() {
+                        target.textContent = "Copy Summary";
+                    }, 1500);
+                }
+            });
+        });
+    ');
+}
+add_action('admin_enqueue_scripts', 'speakable_articles_enqueue_admin_scripts');
