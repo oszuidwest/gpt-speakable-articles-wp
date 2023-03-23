@@ -125,5 +125,5 @@ add_action('admin_init', 'speakable_articles_register_settings');
 
 function speakable_articles_openai_api_key_callback() {
     $api_key = get_option('speakable_articles_openai_api_key', '');
-    echo '<input type="text" name="speakable_articles_openai_api_key" value="' . esc_attr($api_key) . '" size="40">';
+    echo '<input type="password" name="speakable_articles_openai_api_key" value="' . esc_attr($api_key) . '" size="40" autocomplete="off">';
 }
