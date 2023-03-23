@@ -8,6 +8,9 @@
 
 function speakable_articles_generate_gpt_summary(string $content): string {
     $api_key = get_option('speakable_articles_openai_api_key', '');
+    if (empty($api_key)) {
+        return '';
+    }
     $endpoint_url = 'https://api.openai.com/v1/chat/completions';
 
     $data = [
@@ -45,6 +48,11 @@ function speakable_articles_generate_gpt_summary(string $content): string {
 }
 
 function speakable_articles_schedule_summary_generation(int $post_id): void {
+    $api_key = get_option('speakable_articles_openai_api_key', '');
+    if (empty($api_key)) {
+        return;
+    }
+
     if (get_post_type($post_id) !== 'post') {
         return;
     }
