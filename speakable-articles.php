@@ -127,3 +127,57 @@ function speakable_articles_openai_api_key_callback() {
     $api_key = get_option('speakable_articles_openai_api_key', '');
     echo '<input type="password" name="speakable_articles_openai_api_key" value="' . esc_attr($api_key) . '" size="40" autocomplete="off">';
 }
+
+function speakable_articles_admin_page() {
+    $args = [
+        'post_type' => 'post',
+        'meta_key' => 'speakable_articles_summary',
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'posts_per_page' => 10
+    ];
+    $query = new WP_Query($args);
+
+    echo '<div class="wrap">';
+    echo '<h1>Latest Articles with Speakable Summaries</h1>';
+    echo '<table class="wp-list-table widefat fixed striped">';
+    echo '<thead>';
+    echo '<tr>';
+    echo '<th scope="col" id="title" class="manage-column column-title">Post Title</th>';
+    echo '<th scope="col" id="summary" class="manage-column column-summary">Generated Summary</th>';
+    echo '</tr>';
+    echo '</thead>';
+    echo '<tbody>';
+
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+            $post_id = get_the_ID();
+            $title = get_the_title();
+            $summary = get_post_meta($post_id, 'speakable_articles_summary', true);
+
+            echo '<tr>';
+            echo '<td>' . esc_html($title) . '</td>';
+            echo '<td>' . esc_html($summary) . '</td>';
+            echo '</tr>';
+        }
+    } else {
+        echo '<tr><td colspan="2">No articles with speakable summaries found.</td></tr>';
+    }
+
+    echo '</tbody>';
+    echo '</table>';
+    echo '</div>';
+
+    wp_reset_postdata();
+}
+add_action('admin_menu', function () {
+    add_submenu_page(
+        'speakable_articles_settings',
+        'Latest Articles with Speakable Summaries',
+        'Latest Summaries',
+        'manage_options',
+        'speakable_articles_latest_summaries',
+        'speakable_articles_admin_page'
+    );
+});
