@@ -2,10 +2,9 @@
 /**
  * Plugin Name: Speakable Articles
  * Description: Generates a speakable summary of the article on publish using OpenAI GPT-3.5 and stores it in postmeta.
- * Version: 0.1.6
+ * Version: 0.2.0
  * Author: Raymon Mens
  */
-
 function speakable_articles_generate_gpt_summary(string $content): string {
     $api_key = get_option('speakable_articles_openai_api_key', '');
     if (empty($api_key)) {
@@ -128,10 +127,35 @@ function speakable_articles_openai_api_key_callback() {
     echo '<input type="password" name="speakable_articles_openai_api_key" value="' . esc_attr($api_key) . '" size="40" autocomplete="off">';
 }
 
+function generate_summaries_for_latest_articles() {
+    $args = [
+        'post_type' => 'post',
+        'post_status' => 'publish',
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'posts_per_page' => 25
+    ];
+    $query = new WP_Query($args);
+
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+            $post_id = get_the_ID();
+
+            if (!get_post_meta($post_id, 'speakable_articles_summary', true)) {
+                speakable_articles_generate_summary($post_id);
+            }
+        }
+    }
+
+    wp_reset_postdata();
+}
+add_action('wp_ajax_generate_summaries_for_latest_articles', 'generate_summaries_for_latest_articles');
+	
 function speakable_articles_admin_page() {
     $args = [
         'post_type' => 'post',
-		'post_status' => 'publish',
+        'post_status' => 'publish',
         'meta_key' => 'speakable_articles_summary',
         'orderby' => 'date',
         'order' => 'DESC',
@@ -164,7 +188,7 @@ function speakable_articles_admin_page() {
             echo '</tr>';
         }
     } else {
-        echo '<tr><td colspan="2">No articles with speakable summaries found.</td></tr>';
+        echo '<tr><td colspan="2">No articles with speakable summaries found. <a href="#" onclick="event.preventDefault(); generateLatestSummaries();">But you can generate summaries for the latest 25 articles!</a></td></tr>';
     }
 
     echo '</tbody>';
@@ -209,6 +233,18 @@ function speakable_articles_enqueue_admin_scripts() {
                 }
             });
         });
+
+        function generateLatestSummaries() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", ajaxurl, true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    location.reload();
+                }
+            };
+            xhr.send("action=generate_summaries_for_latest_articles");
+        }
     ');
 }
 add_action('admin_enqueue_scripts', 'speakable_articles_enqueue_admin_scripts');
