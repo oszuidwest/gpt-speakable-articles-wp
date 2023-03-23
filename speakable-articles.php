@@ -11,7 +11,7 @@ function speakable_articles_generate_gpt_summary(string $content): string {
     $endpoint_url = 'https://api.openai.com/v1/chat/completions';
 
     $data = [
-        'max_tokens' => 60,
+        'max_tokens' => 256,
         'model' => 'gpt-3.5-turbo',
         'messages' => [
             [
@@ -74,7 +74,7 @@ function speakable_articles_admin_menu() {
         'manage_options',
         'speakable_articles_settings',
         'speakable_articles_settings_page',
-        'dashicons-radio',
+        'dashicons-microphone',
         90
     );
 }
