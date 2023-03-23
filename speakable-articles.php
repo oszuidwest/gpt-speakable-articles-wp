@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Speakable Articles
  * Description: Generates a speakable summary of the article on publish using OpenAI GPT-3.5 and stores it in postmeta.
- * Version: 0.1.1
+ * Version: 0.1.5
  * Author: Raymon Mens
  */
 
@@ -79,7 +79,7 @@ function speakable_articles_admin_menu() {
     add_menu_page(
         'Speakable Articles Settings',
         'Speakable Articles',
-        'manage_options',
+        'edit_posts',
         'speakable_articles_settings',
         'speakable_articles_settings_page',
         'dashicons-microphone',
@@ -131,10 +131,11 @@ function speakable_articles_openai_api_key_callback() {
 function speakable_articles_admin_page() {
     $args = [
         'post_type' => 'post',
+		'post_status' => 'publish',
         'meta_key' => 'speakable_articles_summary',
         'orderby' => 'date',
         'order' => 'DESC',
-        'posts_per_page' => 10
+        'posts_per_page' => 25
     ];
     $query = new WP_Query($args);
 
@@ -177,7 +178,7 @@ add_action('admin_menu', function () {
         'speakable_articles_settings',
         'Latest Articles with Speakable Summaries',
         'Latest Summaries',
-        'manage_options',
+        'edit_posts',
         'speakable_articles_latest_summaries',
         'speakable_articles_admin_page'
     );
@@ -203,7 +204,7 @@ function speakable_articles_enqueue_admin_scripts() {
 
                     target.textContent = "Copied!";
                     setTimeout(function() {
-                        target.textContent = "Copy Summary";
+                        target.textContent = "⇢ Copy Summary";
                     }, 1500);
                 }
             });
