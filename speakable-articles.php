@@ -7,6 +7,7 @@
  */
 function speakable_articles_generate_gpt_summary(string $content): string {
     $api_key = get_option('speakable_articles_openai_api_key', '');
+    $word_limit = get_option('speakable_articles_word_limit', 100);
     if (empty($api_key)) {
         return '';
     }
@@ -18,7 +19,7 @@ function speakable_articles_generate_gpt_summary(string $content): string {
         'messages' => [
             [
                 'role' => 'system',
-                'content' => "You are a text writer for a voice over. You summarize articles in speakable format. Use simple language. Use short sentences. Use an active voice. Do it all in Dutch. Don't use English words."
+                'content' => "You are a text writer for a voice over. You summarize articles in speakable format. Use simple language. Use short sentences. Use an active voice. Do it all in Dutch. Don't use English words. You output no more than " . $word_limit . " words."
             ],
             [
                 'role' => 'user',
@@ -101,6 +102,7 @@ function speakable_articles_settings_page() {
     </div>
     <?php
 }
+add_action('admin_init', 'speakable_articles_register_settings');
 
 function speakable_articles_register_settings() {
     add_settings_section(
@@ -118,13 +120,27 @@ function speakable_articles_register_settings() {
         'speakable_articles_api_settings'
     );
 
+    add_settings_field(
+        'speakable_articles_word_limit',
+        'Word Limit',
+        'speakable_articles_word_limit_callback',
+        'speakable_articles_settings',
+        'speakable_articles_api_settings'
+    );
+
     register_setting('speakable_articles_settings_group', 'speakable_articles_openai_api_key');
+    register_setting('speakable_articles_settings_group', 'speakable_articles_word_limit');
 }
-add_action('admin_init', 'speakable_articles_register_settings');
 
 function speakable_articles_openai_api_key_callback() {
     $api_key = get_option('speakable_articles_openai_api_key', '');
     echo '<input type="password" name="speakable_articles_openai_api_key" value="' . esc_attr($api_key) . '" size="40" autocomplete="off">';
+}
+
+function speakable_articles_word_limit_callback() {
+    $word_limit = get_option('speakable_articles_word_limit', 100);
+    echo '<input type="number" name="speakable_articles_word_limit" value="' . esc_attr($word_limit) . '" min="1">';
+    echo '<p class="description">It\'s very difficult to have GPT 3.5 respect the amount of words. This can be seen as a subtle hint at best.</p>';
 }
 
 function generate_summaries_for_latest_articles() {
