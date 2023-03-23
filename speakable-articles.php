@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Speakable Articles
  * Description: Generates a speakable summary of the article on publish using OpenAI GPT-3.5 and stores it in postmeta.
- * Version: 0.1.5
+ * Version: 0.1.6
  * Author: Raymon Mens
  */
 
@@ -160,7 +160,7 @@ function speakable_articles_admin_page() {
 
             echo '<tr>';
             echo '<td>' . esc_html($title) . '</td>';
-            echo '<td><p>' . esc_html($summary) . '</p><p><strong><span class="copy-summary" data-summary="' . esc_attr($summary) . '" style="color: #0073aa; cursor: pointer;">⇢ Copy Summary</span></strong></p></td>';
+            echo '<td><p>' . esc_html($summary) . '</p><p><strong><span class="copy-summary" data-summary="' . esc_attr($summary) . '" style="color: #0073aa; cursor: pointer;">&#8674; Copy Summary</span></strong></p></td>';
             echo '</tr>';
         }
     } else {
@@ -202,9 +202,9 @@ function speakable_articles_enqueue_admin_scripts() {
                     document.execCommand("copy");
                     document.body.removeChild(textarea);
 
-                    target.textContent = "Copied!";
+                    target.textContent = "\u2713 Copied!";
                     setTimeout(function() {
-                        target.textContent = "&#8674; Copy Summary";
+                        target.textContent = "\u21e2 Copy Summary";
                     }, 1500);
                 }
             });
