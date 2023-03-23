@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/github/license/oszuidwest/gpt-speakable-articles-wp)]([https://github.com/oszuidwest/gpt-speakable-articles-wp/blob/main/LICENSE](https://img.shields.io/github/license/oszuidwest/gpt-speakable-articles-wp))
 
-Speakable Articles is a WordPress plugin that helps radio stations that use Wordpress. It generates a speakable summary of an article on publish using the OpenAI GPT-3.5 and stores it in postmeta. It does this in Dutch, as it's made for [Omroepstichting ZuidWest](https://www.zuidwestfm.nl). It's easy to change the language. Just modify the word "Dutch" in the prompt on line 22 and replace it with your language.
+Speakable Articles is a WordPress plugin that helps radio stations that use Wordpress. It generates a speakable summary of an article on publish using the OpenAI GPT-3.5 API and stores it in postmeta. It does this in Dutch, as it's made for [Omroepstichting ZuidWest](https://www.zuidwestfm.nl). It's easy to change the language. Just modify the word "Dutch" in the prompt on line 22 and replace it with your language.
 
 ## Installation
 1. Upload the plugin files to the `/wp-content/plugins/speakable-articles` directory.
