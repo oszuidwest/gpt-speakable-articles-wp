@@ -2,12 +2,12 @@
 /**
  * Plugin Name: Speakable Articles
  * Description: Generates a speakable summary of the article on publish using OpenAI GPT-3.5 and stores it in postmeta.
- * Version: 0.1
+ * Version: 0.1.1
  * Author: Raymon Mens
  */
 
 function speakable_articles_generate_gpt_summary(string $content): string {
-    $api_key = 'abc123';
+    $api_key = get_option('speakable_articles_openai_api_key', '');
     $endpoint_url = 'https://api.openai.com/v1/chat/completions';
 
     $data = [
@@ -66,3 +66,56 @@ function speakable_articles_generate_summary(int $post_id): void {
     }
 }
 add_action('speakable_articles_generate_summary', 'speakable_articles_generate_summary', 10, 1);
+
+function speakable_articles_admin_menu() {
+    add_menu_page(
+        'Speakable Articles Settings',
+        'Speakable Articles',
+        'manage_options',
+        'speakable_articles_settings',
+        'speakable_articles_settings_page',
+        'dashicons-radio',
+        90
+    );
+}
+add_action('admin_menu', 'speakable_articles_admin_menu');
+
+function speakable_articles_settings_page() {
+    ?>
+    <div class="wrap">
+        <h1>Speakable Articles Settings</h1>
+        <form method="post" action="options.php">
+            <?php
+            settings_fields('speakable_articles_settings_group');
+            do_settings_sections('speakable_articles_settings');
+            submit_button();
+            ?>
+        </form>
+    </div>
+    <?php
+}
+
+function speakable_articles_register_settings() {
+    add_settings_section(
+        'speakable_articles_api_settings',
+        'API Settings',
+        null,
+        'speakable_articles_settings'
+    );
+
+    add_settings_field(
+        'speakable_articles_openai_api_key',
+        'OpenAI API Key',
+        'speakable_articles_openai_api_key_callback',
+        'speakable_articles_settings',
+        'speakable_articles_api_settings'
+    );
+
+    register_setting('speakable_articles_settings_group', 'speakable_articles_openai_api_key');
+}
+add_action('admin_init', 'speakable_articles_register_settings');
+
+function speakable_articles_openai_api_key_callback() {
+    $api_key = get_option('speakable_articles_openai_api_key', '');
+    echo '<input type="text" name="speakable_articles_openai_api_key" value="' . esc_attr($api_key) . '" size="40">';
+}
