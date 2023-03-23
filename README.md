@@ -16,7 +16,7 @@ To use the plugin, you need an OpenAI API key. Enter your API key on the setting
 The plugin adds a new page under the Speakable Articles menu in the WordPress admin. This page shows the latest articles with speakable summaries. You can copy the summary by clicking the "Copy Summary" button.
 
 ## Support and contributions
-If you have any issues or feature requests, please create an issue on the [GitHub repository]([https://github.com/raymonmens/speakable-articles/issues](https://github.com/oszuidwest/gpt-speakable-articles-wp/). Contributions are also welcome. Just open a pull request.
+If you have any issues or feature requests, please create an issue on the [GitHub repository](https://github.com/oszuidwest/gpt-speakable-articles-wp/). Contributions are also welcome. Just open a pull request.
 
 ## License
 Speakable Articles is released under the [MIT License](https://github.com/oszuidwest/gpt-speakable-articles-wp/blob/main/LICENSE).
