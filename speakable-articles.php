@@ -128,6 +128,7 @@ function speakable_articles_openai_api_key_callback() {
 }
 
 function generate_summaries_for_latest_articles() {
+	check_ajax_referer('speakable_articles_generate_summaries_nonce', '_wpnonce', true);
     $args = [
         'post_type' => 'post',
         'post_status' => 'publish',
@@ -211,6 +212,10 @@ add_action('admin_menu', function () {
 function speakable_articles_enqueue_admin_scripts() {
     wp_register_script('speakable-articles-admin', false);
     wp_enqueue_script('speakable-articles-admin');
+    $nonce = wp_create_nonce('speakable_articles_generate_summaries_nonce');
+    wp_localize_script('speakable-articles-admin', 'speakable_articles', array(
+        'ajax_nonce' => $nonce,
+    ));
     wp_add_inline_script('speakable-articles-admin', '
         document.addEventListener("DOMContentLoaded", function() {
             var table = document.querySelector(".speakable-articles-table");
@@ -243,7 +248,7 @@ function speakable_articles_enqueue_admin_scripts() {
                     location.reload();
                 }
             };
-            xhr.send("action=generate_summaries_for_latest_articles");
+            xhr.send("action=generate_summaries_for_latest_articles&_wpnonce=" + encodeURIComponent(speakable_articles.ajax_nonce));
         }
     ');
 }
