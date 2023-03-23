@@ -204,7 +204,7 @@ function speakable_articles_enqueue_admin_scripts() {
 
                     target.textContent = "Copied!";
                     setTimeout(function() {
-                        target.textContent = "⇢ Copy Summary";
+                        target.textContent = "&#8674; Copy Summary";
                     }, 1500);
                 }
             });
