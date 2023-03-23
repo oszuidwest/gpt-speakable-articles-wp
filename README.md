@@ -7,7 +7,7 @@ Speakable Articles is a WordPress plugin that helps radio stations that use Word
 ## Installation
 1. Upload the plugin files to the `/wp-content/plugins/speakable-articles` directory.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Use the Settings->Speakable Articles screen to configure the plugin.
+3. Use the Settings -> Speakable Articles screen to configure the plugin.
 
 ## Settings
 To use the plugin, you need an OpenAI API key. Enter your API key on the settings page.
@@ -20,3 +20,5 @@ If you have any issues or feature requests, please create an issue on the [GitHu
 
 ## License
 Speakable Articles is released under the [MIT License](https://github.com/oszuidwest/gpt-speakable-articles-wp/blob/main/LICENSE).
+
+![sa-ss](https://user-images.githubusercontent.com/6742496/227349510-0d47a146-d8cb-400b-9ce0-b6e97b3eb01c.png)
