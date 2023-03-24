@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Speakable Articles
  * Description: Generates a speakable summary of the article on publish using OpenAI GPT-3.5 and stores it in postmeta.
- * Version: 0.3.0
+ * Version: 0.3.1
  * Author: Raymon Mens (Streekomroep ZuidWest)
  */
 function speakable_articles_generate_gpt_summary(string $content): string {
@@ -170,16 +170,13 @@ function generate_summaries_for_latest_articles() {
 add_action('wp_ajax_generate_summaries_for_latest_articles', 'generate_summaries_for_latest_articles');
 	
 function speakable_articles_admin_page() {
-    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-
     $args = [
         'post_type' => 'post',
         'post_status' => 'publish',
         'meta_key' => 'speakable_articles_summary',
         'orderby' => 'date',
         'order' => 'DESC',
-        'posts_per_page' => 15,
-        'paged' => $paged,
+        'posts_per_page' => 25,
     ];
     $query = new WP_Query($args);
 
