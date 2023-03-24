@@ -175,6 +175,8 @@ function generate_summaries_for_latest_articles() {
 add_action('wp_ajax_generate_summaries_for_latest_articles', 'generate_summaries_for_latest_articles');
 	
 function speakable_articles_admin_page() {
+    $api_key = get_option('speakable_articles_openai_api_key', '');
+
     $args = [
         'post_type' => 'post',
         'post_status' => 'publish',
@@ -197,20 +199,24 @@ function speakable_articles_admin_page() {
 
     echo '<tbody>';
 
-    if ($query->have_posts()) {
-        while ($query->have_posts()) {
-            $query->the_post();
-            $post_id = get_the_ID();
-            $title = get_the_title();
-            $summary = get_post_meta($post_id, 'speakable_articles_summary', true);
-
-            echo '<tr>';
-            echo '<td>' . esc_html($title) . '</td>';
-            echo '<td><p>' . esc_html($summary) . '</p><p><strong><span class="copy-summary" data-summary="' . esc_attr($summary) . '" style="color: #0073aa; cursor: pointer;">&#8674; Copy Summary</span></strong></p></td>';
-            echo '</tr>';
-        }
+    if (empty($api_key)) {
+        echo '<tr><td colspan="2">Enter an OpenAI API Key to get started!</td></tr>';
     } else {
-        echo '<tr><td colspan="2">No articles with speakable summaries found. <a href="#" class="generate-summaries-link">But you can generate summaries for the latest 25 articles!</a></td></tr>';
+        if ($query->have_posts()) {
+            while ($query->have_posts()) {
+                $query->the_post();
+                $post_id = get_the_ID();
+                $title = get_the_title();
+                $summary = get_post_meta($post_id, 'speakable_articles_summary', true);
+
+                echo '<tr>';
+                echo '<td>' . esc_html($title) . '</td>';
+                echo '<td><p>' . esc_html($summary) . '</p><p><strong><span class="copy-summary" data-summary="' . esc_attr($summary) . '" style="color: #0073aa; cursor: pointer;">&#8674; Copy Summary</span></strong></p></td>';
+                echo '</tr>';
+            }
+        } else {
+            echo '<tr><td colspan="2">No articles with speakable summaries found. <a href="#" class="generate-summaries-link">But you can generate summaries for the latest 25 articles!</a></td></tr>';
+        }
     }
 
     echo '</tbody>';
