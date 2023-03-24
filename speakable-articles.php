@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Speakable Articles
  * Description: Generates a speakable summary of the article on publish using OpenAI GPT-3.5 and stores it in postmeta.
- * Version: 0.2.1
+ * Version: 0.3.0
  * Author: Raymon Mens (Streekomroep ZuidWest)
  */
 function speakable_articles_generate_gpt_summary(string $content): string {
@@ -19,7 +19,7 @@ function speakable_articles_generate_gpt_summary(string $content): string {
         'messages' => [
             [
                 'role' => 'system',
-                'content' => "You are a text writer for a voice over. You summarize articles in speakable format. Use simple language. Use short sentences. Use an active voice. Do it all in Dutch. Don't use English words. You output no more than " . $word_limit . " words."
+                'content' => "Please rewrite the following news article in a clear, concise, and engaging manner that is easy to understand for a general radio audience. Do it in Dutch. Use maximal " . $word_limit . " words."
             ],
             [
                 'role' => 'user',
