@@ -149,7 +149,7 @@ function speakable_articles_word_limit_callback() {
 }
 
 function generate_summaries_for_latest_articles() {
-	check_ajax_referer('speakable_articles_generate_summaries_nonce', '_wpnonce', true);
+    check_ajax_referer('speakable_articles_generate_summaries_nonce', '_wpnonce', true);
     $args = [
         'post_type' => 'post',
         'post_status' => 'publish',
