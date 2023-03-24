@@ -170,13 +170,16 @@ function generate_summaries_for_latest_articles() {
 add_action('wp_ajax_generate_summaries_for_latest_articles', 'generate_summaries_for_latest_articles');
 	
 function speakable_articles_admin_page() {
+    $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
     $args = [
         'post_type' => 'post',
         'post_status' => 'publish',
         'meta_key' => 'speakable_articles_summary',
         'orderby' => 'date',
         'order' => 'DESC',
-        'posts_per_page' => 25
+        'posts_per_page' => 15,
+        'paged' => $paged,
     ];
     $query = new WP_Query($args);
 
@@ -205,7 +208,7 @@ function speakable_articles_admin_page() {
             echo '</tr>';
         }
     } else {
-        echo '<tr><td colspan="2">No articles with speakable summaries found. <a href="#" onclick="event.preventDefault(); generateLatestSummaries();">But you can generate summaries for the latest 25 articles!</a></td></tr>';
+        echo '<tr><td colspan="2">No articles with speakable summaries found. <a href="#" class="generate-summaries-link">But you can generate summaries for the latest 25 articles!</a></td></tr>';
     }
 
     echo '</tbody>';
@@ -225,7 +228,12 @@ add_action('admin_menu', function () {
     );
 });
 
-function speakable_articles_enqueue_admin_scripts() {
+function speakable_articles_enqueue_admin_scripts($hook) {
+    // Only enqueue the script on the speakable_articles_latest_summaries admin page
+    if ($hook !== 'speakable-articles_page_speakable_articles_latest_summaries') {
+        return;
+    }
+
     wp_register_script('speakable-articles-admin', false);
     wp_enqueue_script('speakable-articles-admin');
     $nonce = wp_create_nonce('speakable_articles_generate_summaries_nonce');
@@ -253,18 +261,38 @@ function speakable_articles_enqueue_admin_scripts() {
                     }, 1500);
                 }
             });
+
+            var generateLink = document.querySelector(".generate-summaries-link");
+            if (generateLink) {
+                generateLink.addEventListener("click", generateLatestSummaries);
+            }
         });
 
-        function generateLatestSummaries() {
+        function generateLatestSummaries(event) {
+            event.preventDefault();
+
+            var link = event.target;
+            link.style.pointerEvents = "none";
+            link.textContent = "Generating summaries...";
+
+            var spinner = document.createElement("span");
+            spinner.className = "spinner is-active";
+            spinner.style.marginLeft = "10px";
+            link.parentNode.appendChild(spinner);
+
             var xhr = new XMLHttpRequest();
             xhr.open("POST", ajaxurl, true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    location.reload();
+                    console.log("AJAX request completed successfully.");
                 }
             };
             xhr.send("action=generate_summaries_for_latest_articles&_wpnonce=" + encodeURIComponent(speakable_articles.ajax_nonce));
+
+            setTimeout(function() {
+                location.reload();
+            }, 10000);
         }
     ');
 }
