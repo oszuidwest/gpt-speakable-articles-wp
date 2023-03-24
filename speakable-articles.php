@@ -5,6 +5,11 @@
  * Version: 0.3.1
  * Author: Raymon Mens (Streekomroep ZuidWest)
  */
+
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
+
 function speakable_articles_generate_gpt_summary(string $content): string {
     $api_key = get_option('speakable_articles_openai_api_key', '');
     $word_limit = get_option('speakable_articles_word_limit', 100);
